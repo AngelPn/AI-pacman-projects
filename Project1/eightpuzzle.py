@@ -237,7 +237,7 @@ def loadEightPuzzle(puzzleNumber):
 
       puzzleNumber can range from 0 to 5.
 
-      >>> print loadEightPuzzle(0)
+      >>> print(loadEightPuzzle(0))
       -------------
       | 1 |   | 2 |
       -------------
@@ -277,5 +277,5 @@ if __name__ == '__main__':
         print('After %d move%s: %s' % (i, ("", "s")[i>1], a))
         print(curr)
 
-        raw_input("Press return for the next state...")   # wait for key stroke
+        input("Press return for the next state...")   # wait for key stroke
         i += 1

@@ -16,6 +16,7 @@ from util import manhattanDistance
 from game import Grid
 import os
 import random
+from functools import reduce
 
 VISIBILITY_MATRIX_CACHE = {}
 
