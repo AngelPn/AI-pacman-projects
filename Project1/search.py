@@ -86,7 +86,20 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    from util import Stack
+
+    frontier = Stack() #implement the frontier as stack
+    frontier.push(problem.getStartState()) #initialize the frontier using the initial state of problem
+    explored = {} #initialize the explored set to be empty
+    while True:
+        if frontier.isEmpty(): return []
+        node = frontier.pop()
+        explored.add(node)
+        if node.isGoalState(node.getStartState()):
+            successors = node.getSuccessors(node.getStartState())
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
