@@ -73,38 +73,41 @@ def tinyMazeSearch(problem):
     return  [s, s, w, s, w, w, s, w]
 
 def depthFirstSearch(problem):
-    """
-    Search the deepest nodes in the search tree first.
+    frontier = util.Stack()                      # frontier as stack
+    frontier.push((problem.getStartState(), [])) # initialize frontier with initial state (node, actions)
+    explored = set()                             # explored set to be empty
 
-    Your search algorithm needs to return a list of actions that reaches the
-    goal. Make sure to implement a graph search algorithm.
-
-    To get started, you might want to try some of these simple commands to
-    understand the search problem that is being passed in:
-
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    """
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    from util import Stack
-
-    frontier = Stack() #implement the frontier as stack
-    frontier.push(problem.getStartState()) #initialize the frontier using the initial state of problem
-    explored = {} #initialize the explored set to be empty
     while True:
-        if frontier.isEmpty(): return []
-        node = frontier.pop()
-        explored.add(node)
-        if node.isGoalState(node.getStartState()):
-            successors = node.getSuccessors(node.getStartState())
+        if frontier.isEmpty():
+            return []
+        node, actions = frontier.pop()
+        if problem.isGoalState(node):
+            return actions
+        explored.add(node)                        # add the state of the node to the explored set
+        successors = problem.getSuccessors(node)
+        for nextNode, direction, steps in successors: #add the resulting nodes to the frontier
+            if nextNode not in explored:              #only if their state is not in explored set
+                frontier.push((nextNode, actions + [direction]))
+
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
+    frontier = util.Queue()                      # frontier as FIFO Queue
+    frontier.push((problem.getStartState(), [])) # initialize frontier with initial state (node, actions)
+    explored = set()                             # explored set to be empty
+
+    while True:
+        if frontier.isEmpty():
+            return []
+        node, actions = frontier.pop()
+        explored.add(node)                        # add the state of the node to the explored set
+        successors = problem.getSuccessors(node)
+        for nextNode, direction, steps in successors:
+            if nextNode not in explored:
+                if problem.isGoalState(nextNode):
+                    return actions + [direction]
+                frontier.push((nextNode, actions + [direction]))
+
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
