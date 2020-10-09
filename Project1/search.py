@@ -154,7 +154,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     startNode = problem.getStartState()
     frontier = util.PriorityQueue()                               # frontier as Priority Queue
     frontier.push((startNode, []), heuristic(startNode, problem)) # initialize frontier with initial state (node, actions)
-    explored = set()                                              # explored set to be empty
+    explored = []                                              # explored set to be empty
 
     while True:
         if frontier.isEmpty():
@@ -166,7 +166,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
             return actions
 
         if node not in explored:
-            explored.add(node)                        # add the state of the node to the explored set
+            explored.append(node)                        # add the state of the node to the explored set
             successors = problem.getSuccessors(node)
             for nextNode, direction, steps in successors: #add the resulting nodes to the frontier
                 if nextNode not in explored:              #only if their state is not in explored set
