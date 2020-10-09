@@ -98,7 +98,7 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     frontier = util.Queue()                      # frontier as FIFO Queue
     frontier.push((problem.getStartState(), [])) # initialize frontier with initial state (node, actions)
-    explored = set()                             # explored set to be empty
+    explored = []                             # explored set to be empty
 
     while True:
         if frontier.isEmpty():
@@ -107,10 +107,11 @@ def breadthFirstSearch(problem):
         node, actions = frontier.pop()
 
         if problem.isGoalState(node):
+            print(actions)
             return actions
 
         if node not in explored:
-            explored.add(node)                        # add the state of the node to the explored set
+            explored.append(node)                        # add the state of the node to the explored set
             successors = problem.getSuccessors(node)
             for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
                 if nextNode not in explored:              #only if their state is not in explored set 
