@@ -80,12 +80,16 @@ def depthFirstSearch(problem):
     while True:
         if frontier.isEmpty():
             return []
+
         node, actions = frontier.pop()
+
         if problem.isGoalState(node):
             return actions
+
         explored.add(node)                        # add the state of the node to the explored set
+
         successors = problem.getSuccessors(node)
-        for nextNode, direction, steps in successors: #add the resulting nodes to the frontier
+        for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
             if nextNode not in explored:              #only if their state is not in explored set
                 frontier.push((nextNode, actions + [direction]))
 
@@ -99,14 +103,18 @@ def breadthFirstSearch(problem):
     while True:
         if frontier.isEmpty():
             return []
+
         node, actions = frontier.pop()
-        explored.add(node)                        # add the state of the node to the explored set
-        successors = problem.getSuccessors(node)
-        for nextNode, direction, steps in successors:
-            if nextNode not in explored:
-                if problem.isGoalState(nextNode):
-                    return actions + [direction]
-                frontier.push((nextNode, actions + [direction]))
+
+        if problem.isGoalState(node):
+            return actions
+
+        if node not in explored:
+            explored.add(node)                        # add the state of the node to the explored set
+            successors = problem.getSuccessors(node)
+            for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
+                if nextNode not in explored:              #only if their state is not in explored set 
+                    frontier.push((nextNode, actions + [direction]))
 
     util.raiseNotDefined()
 
@@ -119,14 +127,18 @@ def uniformCostSearch(problem):
     while True:
         if frontier.isEmpty():
             return []
+
         node, actions = frontier.pop()
+
         if problem.isGoalState(node):
             return actions
-        explored.add(node)                        # add the state of the node to the explored set
-        successors = problem.getSuccessors(node)
-        for nextNode, direction, cost in successors: #add the resulting nodes to the frontier
-            if nextNode not in explored:              #only if their state is not in explored set
-                frontier.update((nextNode, actions + [direction]), problem.getCostOfActions(actions + [direction]))
+        
+        if node not in explored:
+            explored.add(node)                        # add the state of the node to the explored set
+            successors = problem.getSuccessors(node)
+            for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
+                if nextNode not in explored:              #only if their state is not in explored set
+                    frontier.update((nextNode, actions + [direction]), problem.getCostOfActions(actions + [direction]))
 
     util.raiseNotDefined()
 
@@ -147,15 +159,19 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     while True:
         if frontier.isEmpty():
             return []
+
         node, actions = frontier.pop()
+
         if problem.isGoalState(node):
             return actions
-        explored.add(node)                        # add the state of the node to the explored set
-        successors = problem.getSuccessors(node)
-        for nextNode, direction, steps in successors: #add the resulting nodes to the frontier
-            if nextNode not in explored:              #only if their state is not in explored set
-                evalFn = problem.getCostOfActions(actions + [direction]) + heuristic(nextNode, problem)
-                frontier.update((nextNode, actions + [direction]), evalFn)
+
+        if node not in explored:
+            explored.add(node)                        # add the state of the node to the explored set
+            successors = problem.getSuccessors(node)
+            for nextNode, direction, steps in successors: #add the resulting nodes to the frontier
+                if nextNode not in explored:              #only if their state is not in explored set
+                    evalFn = problem.getCostOfActions(actions + [direction]) + heuristic(nextNode, problem)
+                    frontier.update((nextNode, actions + [direction]), evalFn)
 
 
     util.raiseNotDefined()
