@@ -107,7 +107,6 @@ def breadthFirstSearch(problem):
         node, actions = frontier.pop()
 
         if problem.isGoalState(node):
-            print(actions)
             return actions
 
         if node not in explored:

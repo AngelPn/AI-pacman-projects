@@ -281,8 +281,6 @@ class CornersProblem(search.SearchProblem):
         self.startingPosition = startingGameState.getPacmanPosition()
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
-        print("Corners: ")
-        print(self.corners)
         for corner in self.corners:
             if not startingGameState.hasFood(*corner):
                 print('Warning: no food in corner ' + str(corner))
@@ -295,7 +293,7 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
+        # state: (position, list) list to store the visited corners
         return (self.startingPosition, [])
         util.raiseNotDefined()
 
@@ -303,14 +301,12 @@ class CornersProblem(search.SearchProblem):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
-        node = state[0]
-        visitedCorners = state[1]
-
-        if node in self.corners:
-            if not node in visitedCorners:
-                visitedCorners.append(node)
-            return len(visitedCorners) == 4
+        # state[0] -> node
+        # state[1] -> list of visited corners
+        if state[0] in self.corners:
+            if state[0] not in state[1]:
+                state[1].append(state[0])
+            return len(state[1]) == 4
         return False
 
     def getSuccessors(self, state):
@@ -322,30 +318,23 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-        #print "STATE" , str(state)
-        x, y = state[0]
-        visitedCorners = state[1]
+        #   x,y = currentPosition
+        x, y = state[0] 
+        visitedlist = state[1]
         successors = []
+
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
 
-            "*** YOUR CODE HERE ***"
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            hitsWall = self.walls[nextx][nexty]
-            if not hitsWall:
-                successorVisitedCorners = list(visitedCorners)
-                next_node = (nextx, nexty)
-                if next_node in self.corners:
-                    if next_node not in successorVisitedCorners:
-                        successorVisitedCorners.append(next_node)
-                successor = ((next_node, successorVisitedCorners), action, 1)
-                successors.append(successor)
+            if not self.walls[nextx][nexty]:
+                sucVisitedCorners = list(visitedlist)
+                if (nextx, nexty) in self.corners:
+                    if (nextx, nexty) not in sucVisitedCorners:
+                        sucVisitedCorners.append((nextx, nexty))
+                successors.append((((nextx, nexty), sucVisitedCorners), action, 1))
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
