@@ -168,7 +168,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if node not in explored:
             explored.append(node)                        # add the state of the node to the explored set
             successors = problem.getSuccessors(node)
-            for nextNode, direction, steps in successors: #add the resulting nodes to the frontier
+            for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
                 if nextNode not in explored:              #only if their state is not in explored set
                     evalFn = problem.getCostOfActions(actions + [direction]) + heuristic(nextNode, problem)
                     frontier.update((nextNode, actions + [direction]), evalFn)
