@@ -73,47 +73,66 @@ def tinyMazeSearch(problem):
     return  [s, s, w, s, w, w, s, w]
 
 def depthFirstSearch(problem):
-    frontier = util.Stack()                      # frontier as stack
-    frontier.push((problem.getStartState(), [])) # initialize frontier with initial state (node, actions)
-    explored = set()                             # explored set to be empty
+    # Frontier as stack: initialize frontier with initial state (node, actions)
+    frontier = util.Stack()                      
+    frontier.push((problem.getStartState(), [])) 
+
+    # Explored set to be empty
+    explored = set()                             
 
     while True:
+        # If the frontier is empty then return
         if frontier.isEmpty():
             return []
 
+        # Choose a leaf node and remove it from the frontier
         node, actions = frontier.pop()
 
+        # If the node contains a goal state then return the corresponding solution
         if problem.isGoalState(node):
             return actions
 
-        explored.add(node)                        # add the state of the node to the explored set
+        # Add the state of the node to the explored set
+        explored.add(node)                        
 
+        # Expand the chosen node, adding the resulting nodes to the frontier # 
+        # only if their state is not in the the explored set                 #
         successors = problem.getSuccessors(node)
-        for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
-            if nextNode not in explored:              #only if their state is not in explored set
+        for nextNode, direction, stepCost in successors:
+            if nextNode not in explored:
                 frontier.push((nextNode, actions + [direction]))
 
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
-    frontier = util.Queue()                      # frontier as FIFO Queue
-    frontier.push((problem.getStartState(), [])) # initialize frontier with initial state (node, actions)
-    explored = []                             # explored set to be empty
+    # Frontier as FIFO Queue: initialize frontier with initial state (node, actions)
+    frontier = util.Queue()                      
+    frontier.push((problem.getStartState(), []))
+
+    # Explored list to be empty
+    explored = []                             
 
     while True:
+        # If the frontier is empty then return
         if frontier.isEmpty():
             return []
 
+        # Choose a leaf node and remove it from the frontier
         node, actions = frontier.pop()
 
+        # If the node contains a goal state then return the corresponding solution
         if problem.isGoalState(node):
             return actions
 
         if node not in explored:
-            explored.append(node)                        # add the state of the node to the explored set
+            # Add the state of the node to the explored set
+            explored.append(node)
+
+            # Expand the chosen node, adding the resulting nodes to the frontier # 
+            # only if their state is not in the the explored set                 #
             successors = problem.getSuccessors(node)
-            for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
-                if nextNode not in explored:              #only if their state is not in explored set 
+            for nextNode, direction, stepCost in successors:
+                if nextNode not in explored:
                     frontier.push((nextNode, actions + [direction]))
 
     util.raiseNotDefined()
@@ -125,19 +144,26 @@ def uniformCostSearch(problem):
     explored = set()                                # explored set to be empty
 
     while True:
+        # If the frontier is empty then return
         if frontier.isEmpty():
             return []
 
+        # Choose a leaf node and remove it from the frontier
         node, actions = frontier.pop()
 
+        # If the node contains a goal state then return the corresponding solution
         if problem.isGoalState(node):
             return actions
         
         if node not in explored:
-            explored.add(node)                        # add the state of the node to the explored set
+            # Add the state of the node to the explored set
+            explored.add(node)
+
+            # Expand the chosen node, adding the resulting nodes to the frontier # 
+            # only if their state is not in the the explored set                 #
             successors = problem.getSuccessors(node)
-            for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
-                if nextNode not in explored:              #only if their state is not in explored set
+            for nextNode, direction, stepCost in successors:
+                if nextNode not in explored:
                     frontier.update((nextNode, actions + [direction]), problem.getCostOfActions(actions + [direction]))
 
     util.raiseNotDefined()
@@ -157,19 +183,26 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     explored = []                                              # explored set to be empty
 
     while True:
+        # If the frontier is empty then return
         if frontier.isEmpty():
             return []
 
+        # Choose a leaf node and remove it from the frontier
         node, actions = frontier.pop()
 
+        # If the node contains a goal state then return the corresponding solution
         if problem.isGoalState(node):
             return actions
 
         if node not in explored:
-            explored.append(node)                        # add the state of the node to the explored set
+            # Add the state of the node to the explored set
+            explored.append(node)
+
+            # Expand the chosen node, adding the resulting nodes to the frontier # 
+            # only if their state is not in the the explored set                 #
             successors = problem.getSuccessors(node)
-            for nextNode, direction, stepCost in successors: #add the resulting nodes to the frontier
-                if nextNode not in explored:              #only if their state is not in explored set
+            for nextNode, direction, stepCost in successors:
+                if nextNode not in explored:
                     evalFn = problem.getCostOfActions(actions + [direction]) + heuristic(nextNode, problem)
                     frontier.update((nextNode, actions + [direction]), evalFn)
 

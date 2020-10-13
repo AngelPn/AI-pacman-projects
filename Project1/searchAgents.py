@@ -352,7 +352,6 @@ class CornersProblem(search.SearchProblem):
             if self.walls[x][y]: return 999999
         return len(actions)
 
-
 def cornersHeuristic(state, problem):
     """
     A heuristic for the CornersProblem that you defined.
@@ -452,6 +451,8 @@ class AStarFoodSearchAgent(SearchAgent):
         self.searchFunction = lambda prob: search.aStarSearch(prob, foodHeuristic)
         self.searchType = FoodSearchProblem
 
+flag = 0
+
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -480,12 +481,13 @@ def foodHeuristic(state, problem):
     Subsequent calls to this heuristic can access
     problem.heuristicInfo['wallCount']
     """
+    """
     position, foodGrid = state
     foodCoordinates = foodGrid.asList()
 
     if len(foodCoordinates) == 0:
         return 0
-
+    
     heuristic = 0
     distances = []
 
@@ -494,8 +496,12 @@ def foodHeuristic(state, problem):
 
     heuristic = max(distances)
     return heuristic
-
-   
+    """
+    global flag
+    flag += 1
+    print(flag)
+    return 0
+    
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
     def registerInitialState(self, state):
