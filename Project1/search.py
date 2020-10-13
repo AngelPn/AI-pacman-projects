@@ -139,9 +139,12 @@ def breadthFirstSearch(problem):
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
-    frontier = util.PriorityQueue()                 # frontier as Priority Queue
-    frontier.push((problem.getStartState(), []), 0) # initialize frontier with initial state (node, actions)
-    explored = set()                                # explored set to be empty
+    # Frontier as Priority Queue: initialize frontier with initial state (node, actions)
+    frontier = util.PriorityQueue()                 
+    frontier.push((problem.getStartState(), []), 0)
+
+    # Explored set to be empty
+    explored = set()                                
 
     while True:
         # If the frontier is empty then return
@@ -178,9 +181,13 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     startNode = problem.getStartState()
-    frontier = util.PriorityQueue()                               # frontier as Priority Queue
-    frontier.push((startNode, []), heuristic(startNode, problem)) # initialize frontier with initial state (node, actions)
-    explored = []                                              # explored set to be empty
+
+    # frontier as Priority Queue: initialize frontier with initial state (node, actions)
+    frontier = util.PriorityQueue()                               
+    frontier.push((startNode, []), heuristic(startNode, problem))
+
+    # Explored list to be empty
+    explored = []                                              
 
     while True:
         # If the frontier is empty then return
@@ -205,7 +212,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 if nextNode not in explored:
                     evalFn = problem.getCostOfActions(actions + [direction]) + heuristic(nextNode, problem)
                     frontier.update((nextNode, actions + [direction]), evalFn)
-
 
     util.raiseNotDefined()
 
