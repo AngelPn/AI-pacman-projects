@@ -318,7 +318,7 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-        #   x,y = currentPosition
+        # x,y = currentPosition
         x, y = state[0] 
         visitedlist = state[1]
         successors = []
@@ -327,13 +327,21 @@ class CornersProblem(search.SearchProblem):
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
 
+            # Find movement
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
+
+            # Pick valid movement
             if not self.walls[nextx][nexty]:
                 sucVisitedCorners = list(visitedlist)
+
+                # Check if we have reached a corner in the new position
                 if (nextx, nexty) in self.corners:
+
+                    # If corner is not in list of corners, add it
                     if (nextx, nexty) not in sucVisitedCorners:
                         sucVisitedCorners.append((nextx, nexty))
+
                 successors.append((((nextx, nexty), sucVisitedCorners), action, 1))
 
         self._expanded += 1  # DO NOT CHANGE
@@ -369,23 +377,38 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    unvisitedCorners = []
     heuristic = 0
+
+    # Find the unvisited corners
+    unvisitedCorners = []
     for corner in corners:
         if corner not in state[1]: # state[1] -> visitedCorners
             unvisitedCorners.append(corner)
 
     node = state[0]
-    distances = []
+    distances = util.PriorityQueue()
     
     while len(unvisitedCorners) > 0:
+        # Calculate manhattan distance of node and corner and push it to distances
         for corner in unvisitedCorners:
-            distances.append( (util.manhattanDistance(node, corner), corner) )
-        distance, corner = min(distances)
+            manhattan_distance = util.manhattanDistance(node, corner)
+            distances.push((manhattan_distance, corner), manhattan_distance)
+
+        # Pop the min distance and get the corner
+        distance, corner = distances.pop()
+
+        # Add this distance to total sum 
         heuristic += distance
+
+        # Next node to calculate manhattan distances is latest corner
         node = corner
+
+        # Remove this corner from unvisited corners
         unvisitedCorners.remove(corner)
-        distances.clear()
+
+        # Clear priority queue distances
+        while not distances.isEmpty():
+            distances.pop()
 
     return heuristic
 
