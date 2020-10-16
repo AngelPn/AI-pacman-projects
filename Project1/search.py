@@ -110,7 +110,7 @@ def breadthFirstSearch(problem):
     frontier.push((problem.getStartState(), []))
 
     # Explored list to be empty
-    explored = []                             
+    explored = set()                             
 
     while True:
         # If the frontier is empty then return
@@ -126,7 +126,7 @@ def breadthFirstSearch(problem):
 
         if node not in explored:
             # Add the state of the node to the explored set
-            explored.append(node)
+            explored.add(node)
 
             # Expand the chosen node, adding the resulting nodes to the frontier # 
             # only if their state is not in the the explored set                 #
@@ -187,7 +187,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     frontier.push((startNode, []), heuristic(startNode, problem))
 
     # Explored list to be empty
-    explored = []                                              
+    explored = set()                                              
 
     while True:
         # If the frontier is empty then return
@@ -203,7 +203,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
         if node not in explored:
             # Add the state of the node to the explored set
-            explored.append(node)
+            explored.add(node)
 
             # Expand the chosen node, adding the resulting nodes to the frontier # 
             # only if their state is not in the the explored set                 #

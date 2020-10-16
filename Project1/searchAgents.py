@@ -294,7 +294,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         # state: (position, list) list to store the visited corners
-        return (self.startingPosition, [])
+        return (self.startingPosition, ())
         util.raiseNotDefined()
 
     def isGoalState(self, state):
@@ -305,7 +305,9 @@ class CornersProblem(search.SearchProblem):
         # state[1] -> list of visited corners
         if state[0] in self.corners:
             if state[0] not in state[1]:
-                state[1].append(state[0])
+                visitedlist = list(state[1])
+                visitedlist.append(state[0])
+                state[1] = tuple(visitedlist)
             return len(state[1]) == 4
         return False
 
@@ -342,7 +344,7 @@ class CornersProblem(search.SearchProblem):
                     if (nextx, nexty) not in sucVisitedCorners:
                         sucVisitedCorners.append((nextx, nexty))
 
-                successors.append((((nextx, nexty), sucVisitedCorners), action, 1))
+                successors.append((((nextx, nexty), tuple(sucVisitedCorners)), action, 1))
 
         self._expanded += 1  # DO NOT CHANGE
         return successors
