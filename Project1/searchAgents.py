@@ -293,7 +293,7 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        # state: (position, list) list to store the visited corners
+        # state: (position, tuple) tuple to store the visited corners
         return (self.startingPosition, ())
         util.raiseNotDefined()
 
@@ -305,6 +305,7 @@ class CornersProblem(search.SearchProblem):
         # state[1] -> list of visited corners
         if state[0] in self.corners:
             if state[0] not in state[1]:
+                # Turn tuple to list and change the values
                 visitedlist = list(state[1])
                 visitedlist.append(state[0])
                 state[1] = tuple(visitedlist)
