@@ -74,7 +74,36 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
         "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+        ghostsPos = successorGameState.getGhostPositions()
+
+        eval = 0
+
+        foodDist = []
+        for food in newFood.asList():
+            foodDist.append(util.manhattanDistance(newPos, food))
+        if len(foodDist):
+            eval -= 2*min(foodDist)
+
+        # add points to score of sucessor state if successor state is Pacman eating food.
+        if ( currentGameState.getNumFood() > successorGameState.getNumFood() ):
+            eval += 100
+
+        # Make sure Pacman is always moving
+        if action == Directions.STOP:
+            eval -= 1000
+
+        ghostsDist = []
+        for ghost in ghostsPos:
+            ghostsDist.append(util.manhattanDistance(newPos, ghost))
+        if min(ghostsDist) < 2:
+            return -1000000
+        eval += min(ghostsDist)
+
+        # If pacman's new position would be in one of the power up capsule places, add 120 points to that score
+        if newPos in currentGameState.getCapsules():
+            eval += 1000
+    
+        return eval
 
 def scoreEvaluationFunction(currentGameState):
     """
