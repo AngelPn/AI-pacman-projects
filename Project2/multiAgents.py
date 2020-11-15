@@ -139,10 +139,43 @@ class MultiAgentSearchAgent(Agent):
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
 
+
+
 class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
+    def maxValue(self, state, depth):
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction
+        
+        v = float("-inf")
+
+        # List of legal actions for Pacman
+        pacmanActions = state.getLegalActions(0)
+        
+        for action in pacmanActions:
+            successorGameState = state.generatePacmanSuccessor(action)
+            v = max(v, self.minValue(successorGameState, self.depth - 1))
+
+        return v
+
+    def minValue(self, state, depth):
+        if depth == 0 or state.isWin() or state.isLose():
+            return self.evaluationFunction
+        
+        v = float("inf")
+        
+        for ghostIndex in range(1, state.getNumAgents()):
+
+            ghostActions = state.getLegalActions(ghostIndex)
+
+            successorGameState = []
+            for action in ghostActions:
+                successorGameState = state.generateSuccessor(ghostIndex, action)
+                v = min(v, self.maxValue(successorGameState, self.depth - 1))
+
+        return v
 
     def getAction(self, gameState):
         """
@@ -168,6 +201,20 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
+
+        # List of legal actions for Pacman
+        pacmanActions = gameState.getLegalActions(0)
+        
+        minimaxDecision = 0
+        for action in pacmanActions:
+            successorGameState = gameState.generatePacmanSuccessor(action)
+            minVal = self.minValue(successorGameState, self.depth - 1)
+            if minimaxDecision < minVal:
+                minimaxDecision = minVal
+                a = action
+        
+        return a
+
         util.raiseNotDefined()
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
