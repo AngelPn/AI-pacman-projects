@@ -76,30 +76,34 @@ class ReflexAgent(Agent):
         "*** YOUR CODE HERE ***"
         ghostsPos = successorGameState.getGhostPositions()
 
+        # Variable eval keeps score to return
         eval = 0
+        
+        # If successor state is Pacman eating food, increase points
+        if ( currentGameState.getNumFood() > successorGameState.getNumFood() ):
+            eval += 100
 
+        # If Pacman is not moving, decrease points
+        if action == Directions.STOP:
+            eval -= 1000
+        
+        # Find the closest food and substract the distance from eval (multiple with 2 for better results)
         foodDist = []
         for food in newFood.asList():
             foodDist.append(util.manhattanDistance(newPos, food))
         if len(foodDist):
             eval -= 2*min(foodDist)
 
-        # add points to score of sucessor state if successor state is Pacman eating food.
-        if ( currentGameState.getNumFood() > successorGameState.getNumFood() ):
-            eval += 100
-
-        # Make sure Pacman is always moving
-        if action == Directions.STOP:
-            eval -= 1000
-
+        # Find the closest ghost and add the distance to eval
         ghostsDist = []
         for ghost in ghostsPos:
             ghostsDist.append(util.manhattanDistance(newPos, ghost))
+        # If the ghost is too close, avoid
         if min(ghostsDist) < 2:
             return -1000000
         eval += min(ghostsDist)
 
-        # If pacman's new position would be in one of the power up capsule places, add 120 points to that score
+        # If pacman's new position is to eat capsule, increase eval
         if newPos in currentGameState.getCapsules():
             eval += 1000
     
