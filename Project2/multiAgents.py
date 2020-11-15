@@ -147,7 +147,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     def maxValue(self, state, depth):
         if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction
+            return self.evaluationFunction(state)
         
         v = float("-inf")
 
@@ -155,14 +155,15 @@ class MinimaxAgent(MultiAgentSearchAgent):
         pacmanActions = state.getLegalActions(0)
         
         for action in pacmanActions:
-            successorGameState = state.generatePacmanSuccessor(action)
-            v = max(v, self.minValue(successorGameState, self.depth - 1))
+            successorGameState = state.generateSuccessor(0, action)
+            minVal = int(self.minValue(successorGameState, depth - 1))
+            v = max(v, minVal)
 
         return v
 
     def minValue(self, state, depth):
         if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction
+            return self.evaluationFunction(state)
         
         v = float("inf")
         
@@ -173,7 +174,8 @@ class MinimaxAgent(MultiAgentSearchAgent):
             successorGameState = []
             for action in ghostActions:
                 successorGameState = state.generateSuccessor(ghostIndex, action)
-                v = min(v, self.maxValue(successorGameState, self.depth - 1))
+                maxVal = int(self.maxValue(successorGameState, depth - 1))
+                v = min(v, maxVal)
 
         return v
 
@@ -204,11 +206,16 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
         # List of legal actions for Pacman
         pacmanActions = gameState.getLegalActions(0)
+        print(pacmanActions)
+
+        if not pacmanActions or gameState.isWin() or gameState.isLose():
+            return self.evaluationFunction(gameState)
         
         minimaxDecision = 0
         for action in pacmanActions:
-            successorGameState = gameState.generatePacmanSuccessor(action)
+            successorGameState = gameState.generateSuccessor(0, action)
             minVal = self.minValue(successorGameState, self.depth - 1)
+            a = action
             if minimaxDecision < minVal:
                 minimaxDecision = minVal
                 a = action
