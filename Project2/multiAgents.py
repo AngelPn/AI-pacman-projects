@@ -145,39 +145,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
-    def maxValue(self, state, depth):
-        if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction(state)
-        
-        v = float("-inf")
-
-        # List of legal actions for Pacman
-        pacmanActions = state.getLegalActions(0)
-        
-        for action in pacmanActions:
-            successorGameState = state.generateSuccessor(0, action)
-            minVal = int(self.minValue(successorGameState, depth - 1))
-            v = max(v, minVal)
-
-        return v
-
-    def minValue(self, state, depth):
-        if depth == 0 or state.isWin() or state.isLose():
-            return self.evaluationFunction(state)
-        
-        v = float("inf")
-        
-        for ghostIndex in range(1, state.getNumAgents()):
-
-            ghostActions = state.getLegalActions(ghostIndex)
-
-            successorGameState = []
-            for action in ghostActions:
-                successorGameState = state.generateSuccessor(ghostIndex, action)
-                maxVal = int(self.maxValue(successorGameState, depth - 1))
-                v = min(v, maxVal)
-
-        return v
 
     def getAction(self, gameState):
         """
@@ -203,26 +170,67 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-
-        # List of legal actions for Pacman
-        pacmanActions = gameState.getLegalActions(0)
-        print(pacmanActions)
-
-        if not pacmanActions or gameState.isWin() or gameState.isLose():
-            return self.evaluationFunction(gameState)
         
-        minimaxDecision = 0
-        for action in pacmanActions:
-            successorGameState = gameState.generateSuccessor(0, action)
-            minVal = self.minValue(successorGameState, self.depth - 1)
-            a = action
-            if minimaxDecision < minVal:
-                minimaxDecision = minVal
+        return self.minimax(gameState, 0, 0)[0]
+
+    def minimax(self, state, depth, agent):
+        
+        if agent >= state.getNumAgents():
+            depth += 1
+            agent = 0
+
+        if depth == self.depth or state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+        elif agent == 0:
+            return self.maxValue(state, depth, agent)
+        else:
+            return self.minValue(state, depth, agent)
+
+    def maxValue(self, state, depth, agent):
+        
+        # List of legal actions for agent
+        agentActions = state.getLegalActions(agent)
+
+        # Make sure agentActions is not empty
+        if not agentActions: return self.evaluationFunction(state)
+
+        [a, maxVal] = [agentActions[0], float("-inf")]
+        
+        for action in agentActions:
+            successorState = state.generateSuccessor(agent, action)
+            minimaxVal = self.minimax(successorState, depth, agent + 1)
+
+            if type(minimaxVal) is list: value = minimaxVal[1]
+            else: value = minimaxVal
+
+            if value > maxVal:
+                maxVal = value
                 a = action
-        
-        return a
 
-        util.raiseNotDefined()
+        return [a, maxVal]
+
+    def minValue(self, state, depth, agent):
+        
+        # List of legal actions for ghost
+        ghostActions = state.getLegalActions(agent)
+
+        # Make sure ghostActions is not empty
+        if not ghostActions: return self.evaluationFunction(state)
+
+        [a, minVal] = [ghostActions[0], float("inf")]
+
+        for action in ghostActions:
+            successorState = state.generateSuccessor(agent, action)
+            minimaxVal = self.minimax(successorState, depth, agent + 1)
+
+            if type(minimaxVal) is list: value = minimaxVal[1]
+            else: value = minimaxVal
+
+            if value < minVal:
+                minVal = value
+                a = action
+
+        return [a, minVal]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
