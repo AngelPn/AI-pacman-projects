@@ -174,7 +174,57 @@ class MinimaxAgent(MultiAgentSearchAgent):
         # minimax returns a list: [action, evaluation]
         return self.minimax(gameState, 0, 0)[0]
 
+    def minimax(self, state, depth, agentIndex):
+        # If agentIndex overcomes number of agents, reset agentIndex and increase depth
+        if agentIndex >= state.getNumAgents():
+            depth += 1
+            agentIndex = 0
 
+        # If cut-off-test is true, call evaluation function
+        if depth == self.depth or state.isWin() or state.isLose(): return self.evaluationFunction(state)
+
+        # List of legal actions for agent
+        agentActions = state.getLegalActions(agentIndex)
+        # Make sure agentActions is not empty
+        if not agentActions: return self.evaluationFunction(state)
+
+        # If agent is Pacman (MAX player)
+        if agentIndex == 0:
+            # Initialize action and maxEval
+            [a, maxEval] = [agentActions[0], float("-inf")]
+        
+            for action in agentActions:
+                # Call minimax with generated state and increased agentIndex
+                minimaxVal = self.minimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
+
+                if type(minimaxVal) is list: evaluation = minimaxVal[1]
+                else: evaluation = minimaxVal
+
+                if evaluation > maxEval:
+                    maxEval = evaluation
+                    a = action
+
+            return [a, maxEval]
+
+        # If agent is Ghost (MIN player)
+        else:
+            # Initialize action and minEval
+            [a, minEval] = [agentActions[0], float("inf")]
+
+            for action in agentActions:
+                # Call minimax with generated state and increased agentIndex
+                minimaxVal = self.minimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
+
+                if type(minimaxVal) is list: evaluation = minimaxVal[1]
+                else: evaluation = minimaxVal
+
+                if evaluation < minEval:
+                    minEval = evaluation
+                    a = action
+
+            return [a, minEval]
+
+    """
     def minimax(self, state, depth, agentIndex):
         # If agentIndex overcomes number of agents, reset agentIndex and increase depth
         if agentIndex >= state.getNumAgents():
@@ -237,6 +287,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 a = action
 
         return [a, minEval]
+        """
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
