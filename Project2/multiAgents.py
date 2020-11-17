@@ -170,67 +170,73 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
-        
+
+        # minimax returns a list: [action, evaluation]
         return self.minimax(gameState, 0, 0)[0]
 
-    def minimax(self, state, depth, agent):
-        
-        if agent >= state.getNumAgents():
+
+    def minimax(self, state, depth, agentIndex):
+        # If agentIndex overcomes number of agents, reset agentIndex and increase depth
+        if agentIndex >= state.getNumAgents():
             depth += 1
-            agent = 0
+            agentIndex = 0
 
-        if depth == self.depth or state.isWin() or state.isLose():
-            return self.evaluationFunction(state)
-        elif agent == 0:
-            return self.maxValue(state, depth, agent)
-        else:
-            return self.minValue(state, depth, agent)
+        # If cut-off-test is true, call evaluation function
+        if depth == self.depth or state.isWin() or state.isLose(): return self.evaluationFunction(state)
 
-    def maxValue(self, state, depth, agent):
-        
+        # If agent is Pacman (MAX player), call maxValue function
+        elif agentIndex == 0: return self.maxValue(state, depth, agentIndex)
+
+        # If agent is Ghost (MIN player), call minValue function
+        else: return self.minValue(state, depth, agentIndex)
+
+    def maxValue(self, state, depth, agentIndex):
         # List of legal actions for agent
-        agentActions = state.getLegalActions(agent)
+        agentActions = state.getLegalActions(agentIndex)
 
         # Make sure agentActions is not empty
         if not agentActions: return self.evaluationFunction(state)
 
-        [a, maxVal] = [agentActions[0], float("-inf")]
+        # Initialize action and maxEval
+        [a, maxEval] = [agentActions[0], float("-inf")]
         
         for action in agentActions:
-            successorState = state.generateSuccessor(agent, action)
-            minimaxVal = self.minimax(successorState, depth, agent + 1)
+            # Call minimax with generated state and increased agentIndex
+            minimaxVal = self.minimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
 
-            if type(minimaxVal) is list: value = minimaxVal[1]
-            else: value = minimaxVal
+            # Check type of returned value of minimax
+            if type(minimaxVal) is list: evaluation = minimaxVal[1]
+            else: evaluation = minimaxVal
 
-            if value > maxVal:
-                maxVal = value
+            if evaluation > maxEval:
+                maxEval = evaluation
                 a = action
 
-        return [a, maxVal]
+        return [a, maxEval]
 
-    def minValue(self, state, depth, agent):
-        
+    def minValue(self, state, depth, agentIndex):
         # List of legal actions for ghost
-        ghostActions = state.getLegalActions(agent)
+        ghostActions = state.getLegalActions(agentIndex)
 
         # Make sure ghostActions is not empty
         if not ghostActions: return self.evaluationFunction(state)
 
-        [a, minVal] = [ghostActions[0], float("inf")]
+        # Initialize action and maxEval
+        [a, minEval] = [ghostActions[0], float("inf")]
 
         for action in ghostActions:
-            successorState = state.generateSuccessor(agent, action)
-            minimaxVal = self.minimax(successorState, depth, agent + 1)
+            # Call minimax with generated state and increased agentIndex
+            minimaxVal = self.minimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
 
-            if type(minimaxVal) is list: value = minimaxVal[1]
-            else: value = minimaxVal
+            # Check type of returned value of minimax
+            if type(minimaxVal) is list: evaluation = minimaxVal[1]
+            else: evaluation = minimaxVal
 
-            if value < minVal:
-                minVal = value
+            if evaluation < minEval:
+                minEval = evaluation
                 a = action
 
-        return [a, minVal]
+        return [a, minEval]
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
