@@ -224,71 +224,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
             return [a, minEval]
 
-    """
-    def minimax(self, state, depth, agentIndex):
-        # If agentIndex overcomes number of agents, reset agentIndex and increase depth
-        if agentIndex >= state.getNumAgents():
-            depth += 1
-            agentIndex = 0
-
-        # If cut-off-test is true, call evaluation function
-        if depth == self.depth or state.isWin() or state.isLose(): return self.evaluationFunction(state)
-
-        # If agent is Pacman (MAX player), call maxValue function
-        elif agentIndex == 0: return self.maxValue(state, depth, agentIndex)
-
-        # If agent is Ghost (MIN player), call minValue function
-        else: return self.minValue(state, depth, agentIndex)
-
-    def maxValue(self, state, depth, agentIndex):
-        # List of legal actions for agent
-        agentActions = state.getLegalActions(agentIndex)
-
-        # Make sure agentActions is not empty
-        if not agentActions: return self.evaluationFunction(state)
-
-        # Initialize action and maxEval
-        [a, maxEval] = [agentActions[0], float("-inf")]
-        
-        for action in agentActions:
-            # Call minimax with generated state and increased agentIndex
-            minimaxVal = self.minimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
-
-            # Check type of returned value of minimax
-            if type(minimaxVal) is list: evaluation = minimaxVal[1]
-            else: evaluation = minimaxVal
-
-            if evaluation > maxEval:
-                maxEval = evaluation
-                a = action
-
-        return [a, maxEval]
-
-    def minValue(self, state, depth, agentIndex):
-        # List of legal actions for ghost
-        ghostActions = state.getLegalActions(agentIndex)
-
-        # Make sure ghostActions is not empty
-        if not ghostActions: return self.evaluationFunction(state)
-
-        # Initialize action and maxEval
-        [a, minEval] = [ghostActions[0], float("inf")]
-
-        for action in ghostActions:
-            # Call minimax with generated state and increased agentIndex
-            minimaxVal = self.minimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
-
-            # Check type of returned value of minimax
-            if type(minimaxVal) is list: evaluation = minimaxVal[1]
-            else: evaluation = minimaxVal
-
-            if evaluation < minEval:
-                minEval = evaluation
-                a = action
-
-        return [a, minEval]
-        """
-
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
     Your minimax agent with alpha-beta pruning (question 3)
@@ -302,8 +237,6 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
         # alphaBeta returns a list: [action, evaluation]
         return self.alphaBeta(gameState, 0, 0, float("-inf"), float("inf"))[0]
-
-        util.raiseNotDefined()
     
     def alphaBeta(self, state, depth, agentIndex, a, b):
         # If agentIndex overcomes number of agents, reset agentIndex and increase depth
@@ -391,7 +324,58 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # expectimax returns a list: [action, evaluation]
+        return self.expectimax(gameState, 0, 0)[0]
+    
+    def expectimax(self, state, depth, agentIndex):
+        # If agentIndex overcomes number of agents, reset agentIndex and increase depth
+        if agentIndex >= state.getNumAgents():
+            depth += 1
+            agentIndex = 0
+
+        # If cut-off-test is true, call evaluation function
+        if depth == self.depth or state.isWin() or state.isLose(): return self.evaluationFunction(state)
+
+        # List of legal actions for agent
+        agentActions = state.getLegalActions(agentIndex)
+        # Make sure agentActions is not empty
+        if not agentActions: return self.evaluationFunction(state)
+
+        # If agent is Pacman (MAX player)
+        if agentIndex == 0:
+            # Initialize action and maxEval
+            [a, maxEval] = [agentActions[0], float("-inf")]
+        
+            for action in agentActions:
+                # Call expectimax with generated state and increased agentIndex
+                expectimaxVal = self.expectimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
+
+                if type(expectimaxVal) is list: evaluation = expectimaxVal[1]
+                else: evaluation = expectimaxVal
+
+                if evaluation > maxEval:
+                    maxEval = evaluation
+                    a = action
+
+            return [a, maxEval]
+
+        # If agent is Ghost (MIN player)
+        else:
+            # Initialize Eval and probability
+            Eval = 0
+            probability = 1/len(agentActions)
+
+            for action in agentActions:
+                # Call expectimax with generated state and increased agentIndex
+                expectimaxVal = self.expectimax(state.generateSuccessor(agentIndex, action), depth, agentIndex + 1)
+
+                if type(expectimaxVal) is list: evaluation = expectimaxVal[1]
+                else: evaluation = expectimaxVal
+
+                Eval += probability*evaluation
+                a = action
+
+            return [a, Eval]
 
 def betterEvaluationFunction(currentGameState):
     """
