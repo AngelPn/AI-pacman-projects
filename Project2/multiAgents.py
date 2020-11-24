@@ -92,7 +92,7 @@ class ReflexAgent(Agent):
         for food in newFood.asList():
             foodDist.append(util.manhattanDistance(newPos, food))
         if len(foodDist):
-            eval -= 2*min(foodDist)
+            eval += (-2)*min(foodDist)
 
         # Find the closest ghost and add the distance to eval
         ghostsDist = []
@@ -100,7 +100,7 @@ class ReflexAgent(Agent):
             ghostsDist.append(util.manhattanDistance(newPos, ghost))
         # If the ghost is too close, avoid
         if min(ghostsDist) < 2:
-            return -1000000
+            return float("-inf")
         eval += min(ghostsDist)
 
         # If pacman's new position is to eat capsule, increase eval
@@ -391,24 +391,49 @@ def betterEvaluationFunction(currentGameState):
     newGhostPos = currentGameState.getGhostPositions()
     newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-    eval = 0
+    if currentGameState.isLose(): return float("-inf")
+    elif currentGameState.isWin(): return float("inf")
+
+    # Initialize eval to current score in the game
+    eval = scoreEvaluationFunction(currentGameState)
 
     # Find the closest food and substract the distance from eval (multiple with 2 for better results)
     foodDist = []
     for food in newFood.asList():
         foodDist.append(util.manhattanDistance(newPos, food))
     if len(foodDist):
-        eval -= 2*min(foodDist)
+        closestFood = min(foodDist)
+        # If a food is too close, avoid
+        if closestFood < 7:
+            weight = 10
+        else: weight = 2
+        eval -= weight*min(foodDist)
 
-    # Find the closest ghost and add the distance to eval
+    # Find the distances of ghosts and scared ghosts
     ghostsDist = []
-    for ghost in newGhostPos:
-        ghostsDist.append(util.manhattanDistance(newPos, ghost))
-    # If the ghost is too close, avoid
-    if min(ghostsDist) < 2:
-        return -1000000
-    eval += min(ghostsDist)
+    scaredGhostsDist = []
+    for ghost in newGhostStates:
+        if ghost.scaredTimer:
+            scaredGhostsDist.append(util.manhattanDistance(newPos, ghost.getPosition()))
+        else:
+            #print(ghost.getPosition())
+            ghostsDist.append(util.manhattanDistance(newPos, ghost.getPosition()))
 
+    # Add the distance of closest ghost to eval
+    if len(ghostsDist):
+        closestGhost = min(ghostsDist)
+        # If a ghost is too close, avoid
+        if closestGhost < 2: return float("-inf")
+        eval -= 2/min(ghostsDist)
+    # Add the distance of closest scared ghost to eval
+    if len(scaredGhostsDist):
+        eval += min(scaredGhostsDist)
+
+    # Motivate pacman to eat capsules that he passes
+    eval -+ 20*len(currentGameState.getCapsules())
+    eval -+ 10*currentGameState.getNumFood()
+
+    #print(eval)
     return eval
 
 # Abbreviation
